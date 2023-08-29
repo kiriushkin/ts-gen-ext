@@ -21,7 +21,11 @@
           '<b>ПП</b>: ',
           ''
         )
-        .replace('<br>', '');
+        .replace('<br>', '')
+        .trim()
+        .replace(/[хХ]/g, 'x')
+        .replace(/[сС]/g, 'c')
+        .replace(/\s/g, '');
 
       const formType = pWithAf.innerHTML
         .split('\n')[0]

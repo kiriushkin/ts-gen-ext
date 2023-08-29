@@ -50,35 +50,35 @@
     resultContainer.addEventListener('click', selectElement);
     pathsContainer.addEventListener('click', selectElement);
 
-    if (data.fields)
-      data.fields.forEach((field, index) => {
-        const el = document.createElement('div');
-        el.classList.add('menu__input');
+    const array = data.fields ? data.fields : data.params;
+    array.forEach((field, index) => {
+      const el = document.createElement('div');
+      el.classList.add('menu__input');
 
-        const titleEl = document.createElement('div');
-        titleEl.classList.add('menu__input-title');
-        titleEl.textContent = field.title;
+      const titleEl = document.createElement('div');
+      titleEl.classList.add('menu__input-title');
+      titleEl.textContent = field.title;
 
-        const input = document.createElement('input');
-        input.classList.add('menu__input-el');
+      const input = document.createElement('input');
+      input.classList.add('menu__input-el');
 
-        input.placeholder = field.example;
-        input.value = values[index].value;
+      input.placeholder = field.example;
+      input.value = values[index].value;
 
-        input.oninput = (e) => {
-          values[index].value = e.target.value;
-          updateResultContainer(values);
-          saveState();
-        };
+      input.oninput = (e) => {
+        values[index].value = e.target.value;
+        updateResultContainer(values);
+        saveState();
+      };
 
-        el.appendChild(titleEl);
-        el.appendChild(input);
+      el.appendChild(titleEl);
+      el.appendChild(input);
 
-        mainContainer.insertBefore(
-          el,
-          mainContainer.children[mainContainer.children.length - 1]
-        );
-      });
+      mainContainer.insertBefore(
+        el,
+        mainContainer.children[mainContainer.children.length - 1]
+      );
+    });
 
     updatePathsContainer();
     updateResultContainer();
@@ -87,7 +87,7 @@
     function updateResultContainer() {
       const text = [
         `*ВЕРСТКЕ*`,
-        ...values.map((_) => `*${_.title}* - &#8203;${_.value}&#8203;`),
+        ...values.map((_) => `${_.title} - &#8203;${_.value}&#8203;`),
       ];
       resultContainer.innerHTML = text.join('</br>');
     }
@@ -119,14 +119,23 @@
         params: { title: state?.af },
       });
 
-      const values = data.fields.map((_) => {
-        return {
-          value: state.values.find((i) => i.title === _.title)?.value
-            ? state.values.find((i) => i.title === _.title).value
-            : '',
-          title: _.title,
-        };
-      });
+      const values = data.fields
+        ? data.fields.map((_) => {
+            return {
+              value: state.values.find((i) => i.title === _.title)?.value
+                ? state.values.find((i) => i.title === _.title).value
+                : '',
+              title: _.title,
+            };
+          })
+        : data.params.map((_) => {
+            return {
+              value: state.values.find((i) => i.title === _.title)?.value
+                ? state.values.find((i) => i.title === _.title).value
+                : '',
+              title: _.title,
+            };
+          });
 
       return [state ? { ...state, values, data } : null, landId];
     }
@@ -152,9 +161,15 @@
         url: 'https://-default.sbs/',
       };
 
-      const values = data?.fields.map((_) => {
-        return { value: '', title: _.title };
-      });
+      console.log(data, af);
+
+      const values = data.fields
+        ? data?.fields.map((_) => {
+            return { value: '', title: _.title };
+          })
+        : data?.params.map((_) => {
+            return { value: '', title: _.title };
+          });
 
       return { af, formType, data, paths, values };
     }

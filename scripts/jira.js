@@ -16,8 +16,11 @@
       });
 
       const af = pWithAf.innerHTML
-        .split('\n')[2]
-        .replace('<b>ПП</b>: ', '')
+        .split('\n')
+        [pWithAf.innerHTML.split('\n').findIndex((_) => _.match('ПП'))].replace(
+          '<b>ПП</b>: ',
+          ''
+        )
         .replace('<br>', '');
 
       const formType = pWithAf.innerHTML
